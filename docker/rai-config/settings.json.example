@@ -1,0 +1,22 @@
+{
+    "codebaseIndex":{
+        "enabled":false,
+        "chunk_max_chars":1200,
+        "chunk_min_chars":80,
+        "collection_name":"rai-codebase",
+        "embedding_batch_size":100,
+        "qdrant_api_key":"",
+        "qdrant_url":"",
+        "search_max_results":8,
+        "search_min_score":0.4,
+        "provider_configs":{
+            "openai":{"model":"text-embedding-3-small","primary":false},
+            "gemini":{"model":"gemini-embedding-001","primary":true}
+        }
+    },
+    "companion":{"hatchedAt":10,"name":"Mochi","personality":"playful","species":"cat"},
+    "companionMuted":false,
+    "defaultModel":"deepseek-v4-pro",
+    "permissions":{"defaultMode":"danger-full-access"},
+    "userID":""
+}
