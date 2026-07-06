@@ -51,30 +51,78 @@ Default install location: `~/.local/bin/rai` (macOS/Linux) or `%LOCALAPPDATA%\ra
 
 ## Initial Setup
 
-After installing, you need an **auth config** file to connect to an AI provider.
+After installing, run the setup script to configure your API key:
 
-1. Download the auth config template:
-   **[Google Drive — rai auth config](https://drive.google.com/drive/folders/1B9XbMIrUJ_WhE_YKbTlZMFWrnQ0L9e7W?usp=drive_link)**
+```bash
+curl -fsSL https://raw.githubusercontent.com/wiiscale/rai-pub/main/setup.sh | bash
+```
 
-2. Place it at `~/.rai/auth.json`:
-   ```bash
-   mkdir -p ~/.rai
-   # Copy the downloaded auth.json to ~/.rai/auth.json
-   cp ~/Downloads/auth.json ~/.rai/auth.json
-   ```
+The script will:
+1. Create `~/.rai/` directory
+2. Generate `~/.rai/settings.json` with default config
+3. Let you select an AI provider and enter your API key
+4. Generate `~/.rai/auth.json` with your key
 
-3. Edit `~/.rai/auth.json` and fill in your API key:
-   ```json
-   {
-     "provider": "anthropic",
-     "api_key": "sk-ant-..."
-   }
-   ```
+**Supported providers:** Anthropic, OpenAI, Google Gemini, DeepSeek, Groq, OpenRouter, xAI, NVIDIA, DeepInfra, MiniMax, Xiaomi
 
-4. Verify your setup:
-   ```bash
-   rai doctor
-   ```
+### Manual setup (alternative)
+
+If you prefer to configure manually:
+
+```bash
+mkdir -p ~/.rai
+```
+
+Create `~/.rai/auth.json`:
+```json
+{
+  "DEEPSEEK_API_KEY": "YOUR_DEEPSEEK_API_KEY",
+  "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY",
+  "GEMINI_API_KEY": "YOUR_GEMINI_API_KEY",
+  "OPENROUTER_API_KEY": "YOUR_OPENROUTER_API_KEY",
+  "DEEPINFRA_API_KEY": "YOUR_DEEPINFRA_API_KEY",
+  "XIAOMI_API_KEY": "YOUR_XIAOMI_API_KEY",
+  "MINIMAX_API_KEY": "YOUR_MINIMAX_API_KEY",
+  "XAI_API_KEY": "YOUR_XAI_API_KEY",
+  "GROQ_API_KEY": "YOUR_GROQ_API_KEY",
+  "NVIDIA_API_KEY": "YOUR_NVIDIA_API_KEY",
+  "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY"
+}
+```
+
+> Fill in the key for your provider. See `docker/rai-config/auth.json.example` for all available keys.
+
+Create `~/.rai/settings.json`:
+```json
+{
+    "codebaseIndex":{
+        "enabled":false,
+        "chunk_max_chars":1200,
+        "chunk_min_chars":80,
+        "collection_name":"rai-codebase",
+        "embedding_batch_size":100,
+        "qdrant_api_key":"",
+        "qdrant_url":"",
+        "search_max_results":8,
+        "search_min_score":0.4,
+        "provider_configs":{
+            "openai":{"model":"text-embedding-3-small","primary":false},
+            "gemini":{"model":"gemini-embedding-001","primary":true}
+        }
+    },
+    "companion":{"hatchedAt":10,"name":"Mochi","personality":"playful","species":"cat"},
+    "companionMuted":false,
+    "defaultModel":"deepseek-v4-pro",
+    "permissions":{"defaultMode":"danger-full-access"},
+    "userID":""
+}
+```
+
+### Verify setup
+
+```bash
+rai doctor
+```
 
 ---
 
@@ -183,5 +231,4 @@ choco install gh
 
 ## Links
 
-- **Auth config template:** [Google Drive](https://drive.google.com/drive/folders/1B9XbMIrUJ_WhE_YKbTlZMFWrnQ0L9e7W?usp=drive_link)
 - **Releases:** [GitHub Releases](https://github.com/wiiscale/rai-pub/releases)
