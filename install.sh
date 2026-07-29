@@ -73,7 +73,7 @@ cd "$TMPDIR"
 if command -v shasum &>/dev/null; then
     shasum -a 256 -c checksums.txt 2>/dev/null || true
 elif command -v sha256sum &>/dev/null; then
-    sha256sum -c checksums.txt 2>/dev/null || true
+    grep "$PKG" checksums.txt | sha256sum -c - 2>/dev/null || true
 else
     echo "WARNING: No shasum/sha256sum found — skipping checksum verification" >&2
 fi
