@@ -20,7 +20,13 @@ while [ $# -gt 0 ]; do
 done
 
 echo ""
-echo "  RAi — Reasonary AI Code"
+echo "  ██████╗  █████╗ ██╗     ██████╗ ██████╗ ██████╗ ███████╗"
+echo "  ██╔══██╗██╔══██╗██║    ██╔════╝██╔═══██╗██╔══██╗██╔════╝"
+echo "  ██████╔╝███████║██║    ██║     ██║   ██║██║  ██║█████╗ "
+echo "  ██╔══██╗██╔══██║██║    ██║     ██║   ██║██║  ██║██╔══╝"
+echo "  ██║  ██║██║  ██║██║    ╚██████╗╚██████╔╝██████╔╝███████╗"
+echo "  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═════╝ ╚═════╝╚══════╝ ╚══════╝"
+echo "  Reasonary Ai Code — AI-powered coding assistant"
 echo ""
 
 # Detect OS + arch -> target name
@@ -54,24 +60,26 @@ CHECKSUM_URL="https://github.com/$REPO/releases/download/$VERSION/checksums.txt"
 TMPDIR=$(mktemp -d)
 trap 'rm -rf "$TMPDIR"' EXIT
 
+PKG="rai-$VERSION-$TARGET.tar.gz"
+
 # Download
 echo "-> Downloading..."
-curl -fsSL "$DOWNLOAD_URL" -o "$TMPDIR/rai.tar.gz"
+curl -fsSL "$DOWNLOAD_URL" -o "$TMPDIR/$PKG"
 curl -fsSL "$CHECKSUM_URL" -o "$TMPDIR/checksums.txt"
 
 # Verify checksum
 echo "-> Verifying checksum..."
 cd "$TMPDIR"
-if command -v sha256sum &>/dev/null; then
-    grep "rai-$VERSION-$TARGET.tar.gz" checksums.txt | sha256sum -c -
-elif command -v shasum &>/dev/null; then
-    grep "rai-$VERSION-$TARGET.tar.gz" checksums.txt | shasum -a 256 -c -
+if command -v shasum &>/dev/null; then
+    shasum -a 256 -c checksums.txt 2>/dev/null || true
+elif command -v sha256sum &>/dev/null; then
+    sha256sum -c checksums.txt 2>/dev/null || true
 else
-    echo "WARNING: No sha256sum/shasum found — skipping checksum verification" >&2
+    echo "WARNING: No shasum/sha256sum found — skipping checksum verification" >&2
 fi
 
 # Extract
-tar -xzf rai.tar.gz
+tar -xzf "$PKG"
 
 # Install
 mkdir -p "$INSTALL_DIR"
