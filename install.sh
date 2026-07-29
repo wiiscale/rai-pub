@@ -5,6 +5,7 @@ set -euo pipefail
 
 REPO="wiiscale/rai-pub"
 INSTALL_DIR="${RAI_INSTALL_DIR:-$HOME/.local/bin}"
+VERSION_FILE="https://raw.githubusercontent.com/$REPO/main/VERSION"
 
 VERSION=""
 while [ $# -gt 0 ]; do
@@ -27,11 +28,11 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 
 case "$OS" in
-    Linux)  TARGET="linux-x64" ;;
+    Linux)  TARGET="linux-amd64" ;;
     Darwin)
         case "$ARCH" in
-            arm64|aarch64) TARGET="macos-arm64" ;;
-            x86_64|amd64)  TARGET="macos-x64"   ;;
+            arm64|aarch64) TARGET="darwin-arm64" ;;
+            x86_64|amd64)  TARGET="darwin-amd64"   ;;
             *) echo "ERROR: Unsupported macOS arch: $ARCH" >&2; exit 1 ;;
         esac ;;
     *) echo "ERROR: Unsupported OS: $OS" >&2; exit 1 ;;
@@ -39,8 +40,7 @@ esac
 
 # Resolve latest version if not specified
 if [ -z "$VERSION" ]; then
-    echo "-> Resolving latest release..."
-    VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    VERSION=$(curl -fsSL "$VERSION_FILE" | tr -d '[:space:]')
     if [ -z "$VERSION" ]; then
         echo "ERROR: Could not determine latest version" >&2
         exit 1
