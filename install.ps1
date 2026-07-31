@@ -25,14 +25,13 @@ if ($arch -ne "AMD64") {
     Write-Host "ERROR: Unsupported architecture: $arch (only x64 supported)" -ForegroundColor Red
     exit 1
 }
-$TARGET = "windows-x64"
+$TARGET = "windows-amd64"
 
 # Resolve version
 if (-not $Version) {
     Write-Host "-> Resolving latest release..."
     try {
-        $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$REPO/releases/latest"
-        $Version = $release.tag_name
+        $Version = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/$REPO/main/VERSION").Content.Trim()
     } catch {
         Write-Host "ERROR: Could not resolve latest version" -ForegroundColor Red
         exit 1
