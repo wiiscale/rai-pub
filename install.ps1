@@ -17,7 +17,13 @@ if ($Help) {
 }
 
 Write-Host ""
-Write-Host "  RAi — Reasonary AI Code"
+Write-Host "  ██████╗  █████╗ ██╗     ██████╗ ██████╗ ██████╗ ███████╗"
+Write-Host "  ██╔══██╗██╔══██╗██║    ██╔════╝██╔═══██╗██╔══██╗██╔════╝"
+Write-Host "  ██████╔╝███████║██║    ██║     ██║   ██║██║  ██║█████╗ "
+Write-Host "  ██╔══██╗██╔══██║██║    ██║     ██║   ██║██║  ██║██╔══╝"
+Write-Host "  ██║  ██║██║  ██║██║    ╚██████╗╚██████╔╝██████╔╝███████╗"
+Write-Host "  ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝     ╚═════╝ ╚═════╝╚══════╝ ╚══════╝"
+Write-Host "  Reasonary Ai Code — AI-powered coding assistant"
 Write-Host ""
 
 $arch = $env:PROCESSOR_ARCHITECTURE
@@ -25,13 +31,14 @@ if ($arch -ne "AMD64") {
     Write-Host "ERROR: Unsupported architecture: $arch (only x64 supported)" -ForegroundColor Red
     exit 1
 }
-$TARGET = "windows-amd64"
+$TARGET = "windows-x64"
 
 # Resolve version
 if (-not $Version) {
     Write-Host "-> Resolving latest release..."
     try {
-        $Version = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/$REPO/main/VERSION").Content.Trim()
+        $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$REPO/releases/latest"
+        $Version = $release.tag_name
     } catch {
         Write-Host "ERROR: Could not resolve latest version" -ForegroundColor Red
         exit 1
