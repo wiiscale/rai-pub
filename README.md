@@ -39,6 +39,12 @@ curl -fsSL https://raw.githubusercontent.com/wiiscale/rai-pub/main/install.sh | 
 irm https://raw.githubusercontent.com/wiiscale/rai-pub/main/install.ps1 | iex
 ```
 
+### Via CMD (Windows)
+
+```cmd
+powershell -c "irm https://raw.githubusercontent.com/wiiscale/rai-pub/main/install.ps1 | iex"
+```
+
 ### Manual download
 
 Pre-built binaries for all platforms: [GitHub Releases](https://github.com/wiiscale/rai-pub/releases)
