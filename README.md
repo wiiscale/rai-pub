@@ -21,6 +21,8 @@ RAi is an AI coding assistant that runs in your terminal. It connects to LLMs an
 - **LSP-Enhanced** — RAi uses LSPs for additional context, just like you do
 - **Extensible** — add capabilities via MCPs (`http`, `stdio`, and `sse`), agent skills, hooks, and custom commands
 - **Headless Runner** — run RAi non-interactively for CI/CD, super-agents, and scripted workflows
+- **Reasoning Control** — steer effort levels or thinking with one key (`ctrl+e`) or one CLI flag (`--reasoning`), with automatic clamping to each model's capabilities
+- **Cost-Aware Output** — every headless run reports token usage and estimated USD cost in its result
 - **Cross-Platform** — macOS, Linux, Windows (PowerShell & WSL), FreeBSD, OpenBSD, NetBSD
 
 ---
@@ -63,7 +65,7 @@ rai
 rai run "Explain this codebase to me"
 ```
 
-On first run, RAi walks you through provider setup. Press <kbd>ctrl+l</kbd> at any time to open the model picker, choose your provider, and paste your API key.
+On first run, RAi walks you through provider setup. Press <kbd>ctrl+m</kbd> at any time to open the model picker, choose your provider, and paste your API key.
 
 ---
 
@@ -134,6 +136,31 @@ rai run --small-model "Claude Haiku 4.1" "Review this diff"
 rai run --model "gpt-5.2" --small-model "gpt-oss-120b" "Refactor this module"
 ```
 
+### Reasoning control
+
+Super-agents can steer the model's reasoning with one flag — an effort level or a thinking toggle:
+
+```bash
+# Request an effort level (clamped to the model's supported levels)
+rai run --reasoning high "Design the architecture"
+
+# Disable reasoning
+rai run --reasoning none "Quick factual question"
+
+# Toggle thinking on/off (models without effort levels)
+rai run --reasoning on "Solve this step by step"
+```
+
+Effort requests are **clamped** to the closest supported level of the actual
+model — `--reasoning low` on a model that only supports `[high, max]` uses
+`high`, and the clamp is reported in the result. Requests the model cannot
+satisfy at all (effort on a toggle-only model, thinking on an effort model,
+reasoning on a non-reasoning model) fail with a clear error so super-agents
+never get silent behavior changes.
+
+In interactive mode, <kbd>ctrl+e</kbd> cycles the reasoning control: effort
+models advance through their levels, toggle-only models flip thinking.
+
 ### Structured JSONL output
 
 For super-agents and CI/CD, use `--output-format json` for JSONL streaming:
@@ -153,7 +180,7 @@ Each line is a standalone JSON object:
 {"type":"text","text":"Here's the overview..."}
 {"type":"tool_use","id":"t1","name":"bash","input":{"command":"ls"}}
 {"type":"tool_result","tool_use_id":"t1","tool_name":"bash","output":"...","is_error":false}
-{"type":"result","session_id":"ses_xxx","status":"completed"}
+{"type":"result","session_id":"ses_xxx","status":"completed","usage":{"input_tokens":14965,"output_tokens":3},"cost_usd":0.00001904,"model_id":"deepseek-v4-flash","provider_id":"deepseek","duration_ms":949}
 ```
 
 | Event type | Description |
@@ -164,6 +191,16 @@ Each line is a standalone JSON object:
 | `tool_result` | Tool execution result |
 | `error` | Error event |
 | `result` | Terminal event with session_id |
+
+The `result` event carries a usage/cost summary for super-agents to report
+back accurate figures: `usage` (`input_tokens`/`output_tokens`), `cost_usd`
+(estimated from model.dev pricing), `model_id`/`provider_id`, `duration_ms`,
+and `warning` (e.g. reasoning effort clamps). Text mode prints the same
+summary as a footer line:
+
+```
+── 14978 in / 47 out, $0.000015, 1.5s · deepseek-v4-flash ──
+```
 
 Text/thinking deltas are coalesced. Tool calls pass through one-for-one.
 
