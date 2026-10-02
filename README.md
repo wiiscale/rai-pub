@@ -238,7 +238,7 @@ rai run --session-name "refactor-auth" "Start refactoring the auth module"
 # # session: ses_abc123
 
 # Continue a specific session by ID
-rai run --session ses_abc123 "Continue the refactoring"
+rai run --resume ses_abc123 "Continue the refactoring"
 
 # Continue the most recent session
 rai run --continue "Pick up where we left off"
@@ -262,7 +262,7 @@ Super-agents can capture the session ID from stderr for later continuation:
 ```bash
 SESSION_ID=$(rai run --session-name "ci-review" "Review this PR" 2>&1 | grep '^# session:' | awk '{print $3}')
 # ... do other work ...
-rai run --session "$SESSION_ID" "Apply the fix you suggested"
+rai run --resume "$SESSION_ID" "Apply the fix you suggested"
 ```
 
 ### Exit codes
@@ -283,7 +283,7 @@ git diff HEAD~1 | rai run --quiet "Review this diff for security issues"
 
 # Super-agent chains multiple sessions
 SESSION=$(rai run --session-name "ci-fix" --quiet "Fix the failing tests" 2>&1 | tail -1 | awk '{print $NF}')
-rai run --session "$SESSION" --quiet "Did that resolve the CI failure?"
+rai run --resume "$SESSION" --quiet "Did that resolve the CI failure?"
 ```
 
 ### How it works
